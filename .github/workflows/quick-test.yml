@@ -66,6 +66,22 @@ jobs:
         run: |
             # librt is used for timer_create in the unit tests for lock tracking (mutex-test.c++).
             ./super-test.sh quick ${{ matrix.compiler }} cpp-features "${{matrix.features}}" extra-libs "-lrt"
+  Fedora:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    container: fedora:rawhide
+    steps:
+      - name: install dependencies
+        run: |
+          dnf -y install @development-tools
+          dnf -y install gcc-c++ clang cmake autoconf automake libtool git openssl-devel zlib-devel
+      - uses: actions/checkout@v3
+      - name: super-test
+        run: |
+            ./super-test.sh quick ${{ matrix.compiler }}
   ManyLinux:
     runs-on: ubuntu-20.04
     strategy:
